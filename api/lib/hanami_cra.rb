@@ -1,0 +1,2 @@
+module HanamiCra
+end

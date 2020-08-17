@@ -1,0 +1,7 @@
+/db/*.sqlite
+/public/assets*
+/tmp
+.env.local
+.env.*.local
+
+.DS_Store
