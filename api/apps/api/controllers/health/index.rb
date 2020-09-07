@@ -5,7 +5,7 @@ module Api
         include Api::Action
 
         def call(params)
-          self.body = {:msg => 'Success'}
+          self.body = "Success"
         end
       end
     end
