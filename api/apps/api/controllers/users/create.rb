@@ -6,7 +6,6 @@ module Api
         include Api::Controllers::Authentication::Skip
 
         def call(params)
-          binding.pry
           validation = Api::Validations::Signup.new(params).validate
           return status 422, error_json(validation) unless validation.success?
 
