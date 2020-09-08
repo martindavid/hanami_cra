@@ -1,5 +1,6 @@
 require 'hanami/helpers'
 require 'hanami/assets'
+require 'hanami/middleware/body_parser'
 
 module Api
   class Application < Hanami::Application
@@ -13,10 +14,10 @@ module Api
       #
       root __dir__
 
-      # Relative load paths where this application will recursively load the
-      # code.
-      #
-      # When you add new directories, remember to add them here.
+      load_paths << %w[
+        controllers
+        validations
+        presenters
       #
       load_paths << [
         'controllers',
@@ -43,17 +44,17 @@ module Api
       #
       # scheme 'https'
 
-      # URI host used by the routing system to generate absolute URLs
-      # Defaults to "localhost"
-      #
-      # host 'example.org'
-
-      # URI port used by the routing system to generate absolute URLs
-      # Argument: An object coercible to integer, defaults to 80 if the scheme
-      # is http and 443 if it's https
-      #
-      # This should only be configured if app listens to non-standard ports
-      #
+      middleware.prepend Rack::Cors do
+        allow do
+          origins ENV.fetch('FRONTEND_URL', '*')
+          resource '*', headers: :any, methods: %i[get post put patch delete options head]
+        end
+      end
+      middleware.use Hanami::Middleware::BodyParser, :json
+      middleware.use Warden::Manager do |manager|
+        manager.default_strategies :jwt_strategy
+        manager.failure_app = Api::Controllers::Unauthorized
+      end
       # port 443
 
       # Enable cookies
@@ -267,7 +268,7 @@ module Api
     #
     configure :development do
       # Don't handle exceptions, render the stack trace
-      handle_exceptions false
+      handle_exceptions true
     end
 
     ##
@@ -275,7 +276,7 @@ module Api
     #
     configure :test do
       # Don't handle exceptions, render the stack trace
-      handle_exceptions false
+      handle_exceptions true
     end
 
     ##

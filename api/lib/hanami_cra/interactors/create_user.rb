@@ -9,7 +9,7 @@ class CreateUser
   attr_reader :user_attributes, :password_service, :user_repository
   private :user_attributes, :password_service, :user_repository
 
-  def initialize(user_attributes, password_service: ::Password, user_repository: ::UserRepository.new)
+  def initialize(user_attributes, password_service: Password, user_repository: UserRepository.new)
     @user_attributes = user_attributes
     @password_service = password_service
     @user_repository = user_repository
